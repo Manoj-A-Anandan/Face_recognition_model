@@ -15,14 +15,3 @@ python-multipart
 python-dotenv
 supabase
 numpy
-# Cython and setuptools help build the heavy AI libraries
-cython
-setuptools
-wheel
-# The heavy lifters
-opencv-python-headless
-insightface
-onnxruntime
-pydantic
-requests
-httpx

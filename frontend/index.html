@@ -201,7 +201,9 @@
 </div>
 
 <script>
-  const API_BASE = "http://localhost:8000"; 
+  const API_BASE = window.location.port === "7860" || window.location.hostname.includes("hf.space")
+  ? "" 
+  : "http://localhost:8000";
   let availableEvents = []; 
   let currentMatches = []; 
   let eventsToDeleteList = [];

@@ -306,4 +306,4 @@ def health(): return {"status":"ok"}
 # --- Add this at the very bottom of main.py ---
 @app.get("/")
 async def read_index():
-    return FileResponse("index.html")
+    return FileResponse("../frontend/index.html")
