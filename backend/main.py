@@ -13,6 +13,10 @@ import asyncio
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
 
+# --- Add these imports at the very top of main.py ---
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles # Only if you have a 'static' folder
+
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -298,3 +302,8 @@ async def download_zip(req: ZipRequest):
 
 @app.get("/health")
 def health(): return {"status":"ok"}
+
+# --- Add this at the very bottom of main.py ---
+@app.get("/")
+async def read_index():
+    return FileResponse("index.html")
