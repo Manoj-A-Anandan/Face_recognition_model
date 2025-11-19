@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Folder</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        input, button { padding: 10px; margin: 10px 0; }
+        .msg { margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<h2>Upload Folder (Multiple Images)</h2>
+
+<input type="file" id="files" webkitdirectory directory multiple>
+<button onclick="uploadFolder()">Upload</button>
+
+<div class="msg" id="result"></div>
+
+<script>
+async function uploadFolder() {
+    const files = document.getElementById("files").files;
+
+    if (files.length === 0) {
+        alert("Please select a folder");
+        return;
+    }
+
+    const form = new FormData();
+    for (let f of files) form.append("files", f);
+
+    const res = await fetch("http://localhost:8000/upload-folder", {
+        method: "POST",
+        body: form
+    });
+
+    const data = await res.json();
+    document.getElementById("result").innerHTML =
+        "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+}
+</script>
+
+</body>
+</html>
