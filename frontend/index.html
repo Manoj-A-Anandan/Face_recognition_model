@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Match My Guest</title>
+<title>Face Matcher</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
@@ -53,7 +53,7 @@
   .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px; }
   .nav-title { font-weight: 700; font-size: 1.2rem; color: var(--text-main); }
 
-  .btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: transform 0.2s; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
   .btn:active { transform: scale(0.98); }
   .btn:disabled { background-color: #ccc !important; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
   .btn-sm { padding: 6px 12px; font-size: 0.85rem; }
@@ -107,7 +107,11 @@
   <div class="choice-container">
     <div class="choice-card" onclick="navTo('uploadSection')">
       <span class="choice-icon">
-        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+        <svg viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
       </span>
       <h3>Upload</h3>
       <span>Create event</span>
@@ -115,7 +119,10 @@
 
     <div class="choice-card" onclick="navTo('querySection'); loadEventsForQuery();">
       <span class="choice-icon">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <svg viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
       </span>
       <h3>Find Face</h3>
       <span>Search photos</span>
@@ -123,7 +130,10 @@
 
     <div class="choice-card" onclick="navTo('deleteSection'); loadEventsForDelete();">
       <span class="choice-icon">
-         <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+         <svg viewBox="0 0 24 24">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+         </svg>
       </span>
       <h3>Manage</h3>
       <span>Delete events</span>
@@ -201,9 +211,9 @@
 </div>
 
 <script>
-  const API_BASE = window.location.port === "7860" || window.location.hostname.includes("hf.space")
-  ? "" 
-  : "http://localhost:8000";
+  // Use relative path for maximum compatibility on Hugging Face / Cloud
+  const API_BASE = ""; 
+
   let availableEvents = []; 
   let currentMatches = []; 
   let eventsToDeleteList = [];
@@ -216,8 +226,9 @@
     el.classList.add('fade-in');
     setTimeout(() => el.classList.remove('fade-in'), 500);
 
-    localStorage.setItem('lastPage', sectionId);
-    if(sectionId === 'landingSection') localStorage.removeItem('lastPage');
+    // CHANGED: sessionStorage clears when the browser tab is closed
+    sessionStorage.setItem('lastPage', sectionId);
+    if(sectionId === 'landingSection') sessionStorage.removeItem('lastPage');
 
     resetUploadPage();
     resetQueryPage();
@@ -225,7 +236,8 @@
   }
 
   window.addEventListener('load', () => {
-    const lastPage = localStorage.getItem('lastPage');
+    // CHANGED: Check sessionStorage instead of localStorage
+    const lastPage = sessionStorage.getItem('lastPage');
     if(lastPage && document.getElementById(lastPage)) {
         navTo(lastPage);
         if(lastPage === 'querySection') loadEventsForQuery();
@@ -530,7 +542,7 @@
             body: JSON.stringify({ event_prefixes: prefixes })
         });
         const data = await res.json();
-        status.innerHTML = `<span class="success">^_^ Deleted ${data.deleted} events.</span>`;
+        status.innerHTML = `<span class="success">Successfully deleted ${data.deleted} events.</span>`;
         
         document.getElementById('deleteList').innerHTML = "";
         document.getElementById('deleteListCount').textContent = "Refreshing...";
